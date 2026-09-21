@@ -63,6 +63,8 @@
     background:var(--paper);backdrop-filter:blur(18px);
     border:1px solid rgba(255,255,255,.75);border-radius:32px;box-shadow:var(--shadow);overflow:auto
   }
+  .slide{scrollbar-width:none;-ms-overflow-style:none}
+  .slide::-webkit-scrollbar{display:none;width:0;height:0}
   .slide.active{display:block;animation:fade .22s ease}
   @keyframes fade{from{opacity:.18;transform:translateY(8px)}to{opacity:1;transform:none}}
   .slide-inner{padding:34px 42px 36px;min-height:100%;display:flex;flex-direction:column;position:relative}
@@ -86,26 +88,47 @@
   }
   .cover::before{width:340px;height:340px;right:-70px;top:-80px;background:radial-gradient(circle, rgba(37,99,235,.26), rgba(37,99,235,.04) 60%, transparent 72%)}
   .cover::after{width:280px;height:280px;left:-50px;bottom:-80px;background:radial-gradient(circle, rgba(79,140,255,.22), rgba(79,140,255,.04) 60%, transparent 72%)}
-  .cover-wrap{flex:1;display:grid;place-items:center;position:relative}
+  .cover-wrap{flex:1;position:relative;min-height:560px;display:grid;place-items:center;padding:34px}
   .cover-title{
-    position:relative;z-index:2;text-align:center;padding:60px 70px;border-radius:34px;
-    background:linear-gradient(180deg, rgba(255,255,255,.70), rgba(255,255,255,.44));
-    border:1px solid rgba(255,255,255,.70);
-    box-shadow:0 30px 70px rgba(30,64,175,.10);
-    backdrop-filter:blur(14px);
+    position:relative;z-index:3;text-align:left;width:min(850px,78vw);padding:58px 64px 54px;border-radius:38px;
+    background:linear-gradient(145deg, rgba(255,255,255,.80), rgba(255,255,255,.46));
+    border:1px solid rgba(255,255,255,.80);
+    box-shadow:0 34px 86px rgba(30,64,175,.13);
+    backdrop-filter:blur(18px);
+    overflow:hidden;
   }
+  .cover-title::after{
+    content:"";position:absolute;right:-90px;bottom:-115px;width:310px;height:310px;border-radius:50%;
+    background:radial-gradient(circle,rgba(37,99,235,.16),rgba(96,165,250,.04) 58%,transparent 72%);
+    pointer-events:none
+  }
+  .cover-kicker{
+    display:inline-flex;align-items:center;gap:9px;margin-bottom:22px;padding:8px 13px;border-radius:999px;
+    background:rgba(37,99,235,.08);color:#31568e;font-size:15px;font-weight:850;letter-spacing:.06em
+  }
+  .cover-kicker::before{content:"";width:8px;height:8px;border-radius:50%;background:#2563eb;box-shadow:0 0 0 6px rgba(37,99,235,.08)}
   .cover-title h1{
-    background:linear-gradient(135deg,#153169 0%,#2563eb 52%,#0f172a 100%);
+    max-width:720px;font-size:clamp(52px,6.3vw,88px);letter-spacing:-.04em;
+    background:linear-gradient(135deg,#153169 0%,#2563eb 48%,#0f172a 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;
-    text-shadow:0 10px 30px rgba(37,99,235,.12)
+    text-shadow:0 10px 30px rgba(37,99,235,.10)
   }
-  .cover-deco,.cover-deco2,.cover-deco3{
-    position:absolute;border-radius:26px;background:rgba(255,255,255,.56);backdrop-filter:blur(8px);
-    border:1px solid rgba(255,255,255,.68);box-shadow:0 14px 30px rgba(18,38,81,.08)
+  .cover-rule{width:86px;height:5px;border-radius:99px;background:linear-gradient(90deg,#2563eb,#7fb8ff);margin:28px 0 18px}
+  .cover-sub{margin:0;color:#4b638c;font-size:22px;font-weight:700;letter-spacing:.02em}
+  .cover-meta{margin-top:9px;color:#7890b5;font:700 13px/1.4 Consolas,monospace;letter-spacing:.16em}
+  .cover-deco,.cover-deco2,.cover-deco3,.cover-deco4{
+    position:absolute;border-radius:26px;background:rgba(255,255,255,.58);backdrop-filter:blur(9px);
+    border:1px solid rgba(255,255,255,.72);box-shadow:0 16px 34px rgba(18,38,81,.09);
+    z-index:2
   }
-  .cover-deco{left:60px;top:70px;padding:18px 22px;font:700 30px/1.2 Consolas,monospace;color:#2563eb;transform:rotate(-9deg)}
-  .cover-deco2{right:78px;bottom:78px;padding:18px 22px;font:700 28px/1.2 Consolas,monospace;color:#1d4ed8;transform:rotate(8deg)}
-  .cover-deco3{right:120px;top:98px;padding:14px 18px;font-size:18px;color:#3f5c89;transform:rotate(10deg)}
+  .cover-deco{left:44px;top:66px;padding:18px 22px;font:700 29px/1.2 Consolas,monospace;color:#2563eb;transform:rotate(-8deg)}
+  .cover-deco2{right:56px;bottom:72px;padding:18px 22px;font:700 27px/1.2 Consolas,monospace;color:#1d4ed8;transform:rotate(7deg)}
+  .cover-deco3{right:82px;top:76px;padding:14px 18px;font:700 17px/1.2 Consolas,monospace;color:#4a6690;transform:rotate(8deg)}
+  .cover-deco4{left:82px;bottom:76px;padding:13px 17px;font:700 16px/1.2 Consolas,monospace;color:#54719c;transform:rotate(-6deg)}
+  #app.cover-mode .bottom-nav{opacity:0;pointer-events:none;transform:translateY(18px)}
+  .bottom-nav{transition:opacity .18s ease,transform .18s ease}
+  #app.cover-mode #zonePrev{pointer-events:none}
+  #app.cover-mode #zonePrev .hint{opacity:0}
   .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
   .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
   .card,.point,.focus-card,.operator-card{
@@ -217,8 +240,10 @@
     .bodytxt,.point-desc,.table td,.table th,.code,.output{font-size:18px}
     .point-title{font-size:22px}
     .click-zone{width:10vw}
-    .cover-title{padding:42px 28px}
-    .cover-deco,.cover-deco2,.cover-deco3{display:none}
+    .cover-wrap{min-height:500px;padding:16px}
+    .cover-title{width:min(92vw,760px);padding:42px 30px}
+    .cover-sub{font-size:18px}
+    .cover-deco,.cover-deco2,.cover-deco3,.cover-deco4{display:none}
   }
 </style>
 </head>
@@ -250,9 +275,14 @@
         <div class="cover-wrap">
           <div class="cover-deco">print("hello")</div>
           <div class="cover-deco2">x = 2 ** 5</div>
-          <div class="cover-deco3">while / list / function</div>
+          <div class="cover-deco3">while · list · function</div>
+          <div class="cover-deco4">>>> learning_python</div>
           <div class="cover-title">
+            <div class="cover-kicker">第四章 · 程序设计基础</div>
             <h1>Python语言的基础知识</h1>
+            <div class="cover-rule"></div>
+            <p class="cover-sub">活动 1 · 程序设计语言的基础知识</p>
+            <div class="cover-meta">PYTHON · PROGRAMMING BASICS</div>
           </div>
         </div>
       </div>
@@ -844,6 +874,7 @@ function updateTabs(){
 
 function go(i){
   current = Math.max(0, Math.min(slides.length-1, i));
+  document.getElementById('app').classList.toggle('cover-mode', current===0);
   slides.forEach((s,idx)=>s.classList.toggle('active', idx===current));
   [...dots.children].forEach((d,idx)=>d.classList.toggle('active', idx===current));
   pagePill.textContent = `${current+1} / ${slides.length}`;
