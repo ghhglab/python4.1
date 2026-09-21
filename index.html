@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Python语言基础互动课件 v3</title>
+<style>
+  :root{
+    --bg:#eef3fb;
+    --paper:rgba(255,255,255,.78);
+    --paper-strong:rgba(255,255,255,.92);
+    --line:rgba(31,58,120,.10);
+    --text:#14213d;
+    --sub:#4f658d;
+    --blue:#2563eb;
+    --blue2:#4f8cff;
+    --blue3:#8ec5ff;
+    --deep:#0f172a;
+    --good:#198754;
+    --bad:#d9485f;
+    --shadow:0 18px 60px rgba(18,38,81,.12);
+    --radius:24px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;width:100%;height:100%;overflow:hidden;background:
+      radial-gradient(circle at 15% 20%, rgba(79,140,255,.18), transparent 32%),
+      radial-gradient(circle at 80% 18%, rgba(37,99,235,.10), transparent 28%),
+      radial-gradient(circle at 75% 80%, rgba(142,197,255,.18), transparent 28%),
+      linear-gradient(180deg,#f7faff 0%,#edf3ff 55%,#eaf0fb 100%);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",Arial,sans-serif}
+  button{font:inherit}
+  #app{height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden}
+  .topbar{
+    height:70px;flex:0 0 70px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;
+    background:rgba(255,255,255,.68);backdrop-filter:blur(16px);border-bottom:1px solid rgba(39,80,166,.08);z-index:40
+  }
+  .brand{display:flex;align-items:center;gap:14px}
+  .logo{
+    width:42px;height:42px;border-radius:14px;
+    background:linear-gradient(135deg,#1d4ed8,#60a5fa);
+    color:#fff;display:grid;place-items:center;font-weight:800;font-size:18px;
+    box-shadow:0 10px 28px rgba(37,99,235,.28)
+  }
+  .brand-text b{display:block;font-size:17px}
+  .brand-text span{display:block;color:var(--sub);font-size:12px;margin-top:2px}
+  .nav-tabs{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center}
+  .tab{
+    border:0;background:transparent;color:#44608f;padding:10px 12px;border-radius:999px;cursor:pointer;
+    font-weight:700;font-size:13px;transition:.18s ease
+  }
+  .tab.active{background:rgba(37,99,235,.10);color:var(--blue);box-shadow:inset 0 0 0 1px rgba(37,99,235,.08)}
+  .tools{display:flex;align-items:center;gap:10px}
+  .pill{padding:8px 12px;border-radius:999px;background:rgba(37,99,235,.09);color:var(--blue);font-size:13px;font-weight:800}
+  .toolbtn{
+    border:0;border-radius:12px;background:rgba(255,255,255,.86);padding:10px 14px;cursor:pointer;font-weight:800;
+    color:#2d4877;box-shadow:0 6px 20px rgba(18,38,81,.08);transition:.16s ease
+  }
+  .toolbtn:hover{transform:translateY(-1px)}
+  .stage{position:relative;flex:1;min-height:0;padding:18px 18px 74px}
+  .slide{
+    display:none;position:absolute;inset:18px 18px 74px;
+    background:var(--paper);backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,.75);border-radius:32px;box-shadow:var(--shadow);overflow:auto
+  }
+  .slide.active{display:block;animation:fade .22s ease}
+  @keyframes fade{from{opacity:.18;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .slide-inner{padding:34px 42px 36px;min-height:100%;display:flex;flex-direction:column;position:relative}
+  .eyebrow{color:#2563eb;font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+  h1,h2,h3,p{margin-top:0}
+  h1{font-size:clamp(44px,6vw,86px);line-height:1.02;margin-bottom:0}
+  h2{font-size:clamp(34px,3.8vw,54px);line-height:1.14;margin-bottom:18px}
+  h3{font-size:24px;margin-bottom:10px}
+  .subtitle{font-size:24px;line-height:1.65;color:var(--sub)}
+  .bodytxt,.point-desc,.table td,.table th,.code,.output{font-size:21px}
+  .bodytxt,.point-desc{line-height:1.78;color:#294266}
+  .cover{
+    background:
+      radial-gradient(circle at 22% 24%, rgba(255,255,255,.92), transparent 30%),
+      radial-gradient(circle at 72% 24%, rgba(126,176,255,.35), transparent 26%),
+      radial-gradient(circle at 82% 74%, rgba(37,99,235,.18), transparent 26%),
+      linear-gradient(135deg, rgba(255,255,255,.72), rgba(227,239,255,.82) 36%, rgba(202,225,255,.88) 100%);
+  }
+  .cover::before,.cover::after{
+    content:"";position:absolute;border-radius:999px;filter:blur(4px)
+  }
+  .cover::before{width:340px;height:340px;right:-70px;top:-80px;background:radial-gradient(circle, rgba(37,99,235,.26), rgba(37,99,235,.04) 60%, transparent 72%)}
+  .cover::after{width:280px;height:280px;left:-50px;bottom:-80px;background:radial-gradient(circle, rgba(79,140,255,.22), rgba(79,140,255,.04) 60%, transparent 72%)}
+  .cover-wrap{flex:1;display:grid;place-items:center;position:relative}
+  .cover-title{
+    position:relative;z-index:2;text-align:center;padding:60px 70px;border-radius:34px;
+    background:linear-gradient(180deg, rgba(255,255,255,.70), rgba(255,255,255,.44));
+    border:1px solid rgba(255,255,255,.70);
+    box-shadow:0 30px 70px rgba(30,64,175,.10);
+    backdrop-filter:blur(14px);
+  }
+  .cover-title h1{
+    background:linear-gradient(135deg,#153169 0%,#2563eb 52%,#0f172a 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 10px 30px rgba(37,99,235,.12)
+  }
+  .cover-deco,.cover-deco2,.cover-deco3{
+    position:absolute;border-radius:26px;background:rgba(255,255,255,.56);backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,.68);box-shadow:0 14px 30px rgba(18,38,81,.08)
+  }
+  .cover-deco{left:60px;top:70px;padding:18px 22px;font:700 30px/1.2 Consolas,monospace;color:#2563eb;transform:rotate(-9deg)}
+  .cover-deco2{right:78px;bottom:78px;padding:18px 22px;font:700 28px/1.2 Consolas,monospace;color:#1d4ed8;transform:rotate(8deg)}
+  .cover-deco3{right:120px;top:98px;padding:14px 18px;font-size:18px;color:#3f5c89;transform:rotate(10deg)}
+  .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .card,.point,.focus-card,.operator-card{
+    border-radius:22px;background:var(--paper-strong);border:1px solid rgba(37,99,235,.07);box-shadow:0 10px 30px rgba(18,38,81,.06)
+  }
+  .card{padding:22px}
+  .point{display:flex;gap:16px;align-items:flex-start;padding:18px 20px}
+  .point + .point{margin-top:14px}
+  .point-num{
+    flex:0 0 42px;width:42px;height:42px;border-radius:14px;
+    background:linear-gradient(135deg, rgba(37,99,235,.14), rgba(96,165,250,.18));
+    color:var(--blue);display:grid;place-items:center;font-weight:900;font-size:20px
+  }
+  .point-body{flex:1;min-width:0}
+  .point-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .point-title{font-weight:900;font-size:26px;line-height:1.35}
+  .example-btn{
+    border:0;border-radius:14px;padding:11px 14px;background:linear-gradient(135deg,#2563eb,#4f8cff);
+    color:#fff;cursor:pointer;font-weight:800;font-size:16px;box-shadow:0 10px 20px rgba(37,99,235,.20)
+  }
+  .example-btn::before{content:"▶ ";font-size:11px}
+  .tag{display:inline-flex;padding:6px 10px;border-radius:999px;background:rgba(37,99,235,.10);color:#1d4ed8;font-size:14px;font-weight:800}
+  .code{
+    background:#0f172a;color:#e5eefb;border-radius:18px;padding:16px 18px;font-family:Consolas,"SFMono-Regular",Menlo,monospace;
+    line-height:1.72;white-space:pre-wrap;overflow:auto;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)
+  }
+  .code .kw{color:#9ac4ff}.code .str{color:#9ef0b5}.code .num{color:#ffd166}.code .fn{color:#cdb4ff}.code .cm{color:#8ea0c5}
+  .callout{
+    border-radius:22px;padding:18px 20px;line-height:1.75;font-size:21px;color:#234168;
+    background:linear-gradient(180deg, rgba(225,238,255,.94), rgba(239,246,255,.92));
+    border:1px solid rgba(37,99,235,.10)
+  }
+  .danger{background:linear-gradient(180deg, rgba(255,240,242,.95), rgba(255,247,247,.94));color:#7b3243;border-color:rgba(217,72,95,.12)}
+  .info-strip{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+  .info-strip span{padding:8px 12px;border-radius:999px;background:rgba(37,99,235,.10);color:#1d4ed8;font-size:16px;font-weight:800}
+  .table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:22px;background:var(--paper-strong);box-shadow:0 10px 30px rgba(18,38,81,.06)}
+  .table th,.table td{padding:16px 16px;text-align:left;border-bottom:1px solid rgba(37,99,235,.08);vertical-align:middle}
+  .table th{background:rgba(244,248,255,.98);color:#4f658d}
+  .table tr:last-child td{border-bottom:0}
+  .function-name{
+    border:0;background:transparent;color:var(--blue);font:900 22px Consolas,monospace;cursor:pointer;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:6px
+  }
+  .focus-wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:18px}
+  .focus-card{padding:24px}
+  .operator-showcase{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:18px}
+  .operator-card{padding:22px;background:linear-gradient(180deg, rgba(255,255,255,.95), rgba(240,246,255,.92))}
+  .operator-card b{display:block;font-size:38px;color:#1d4ed8;margin-bottom:8px}
+  .operator-card .big-demo{font-size:30px;font-weight:900;color:#13294b;margin:12px 0}
+  .operator-card .small{color:#4d6791;font-size:18px;line-height:1.65}
+  .task-box{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  .big-icon{font-size:36px;line-height:1}
+  .thanks{
+    background:
+      radial-gradient(circle at 26% 24%, rgba(255,255,255,.88), transparent 28%),
+      radial-gradient(circle at 78% 30%, rgba(142,197,255,.34), transparent 24%),
+      radial-gradient(circle at 70% 76%, rgba(37,99,235,.16), transparent 24%),
+      linear-gradient(135deg, rgba(255,255,255,.82), rgba(232,241,255,.92), rgba(205,226,255,.92));
+  }
+  .thanks-wrap{flex:1;display:grid;place-items:center;text-align:center;position:relative}
+  .thanks-box{
+    padding:52px 64px;border-radius:34px;background:rgba(255,255,255,.68);border:1px solid rgba(255,255,255,.72);
+    backdrop-filter:blur(12px);box-shadow:0 26px 72px rgba(37,99,235,.10)
+  }
+  .thanks-box h1{font-size:clamp(48px,6.4vw,88px);margin-bottom:18px;background:linear-gradient(135deg,#163b7a,#2563eb 52%,#0f172a);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .thanks-box p{font-size:26px;color:#4b638c;margin:0}
+  .bottom-nav{
+    position:absolute;left:18px;right:18px;bottom:18px;height:46px;display:flex;align-items:center;justify-content:center;gap:10px;z-index:20
+  }
+  .nav-btn{
+    border:0;border-radius:14px;padding:11px 18px;background:rgba(255,255,255,.86);cursor:pointer;font-weight:900;color:#27416c;
+    box-shadow:0 8px 20px rgba(18,38,81,.08)
+  }
+  .nav-btn.primary{background:linear-gradient(135deg,#2563eb,#4f8cff);color:#fff}
+  .nav-btn:disabled{opacity:.45;cursor:not-allowed}
+  .dots{display:flex;gap:7px;margin:0 8px}
+  .dot{width:10px;height:10px;border-radius:99px;border:0;background:rgba(65,95,146,.24);padding:0;cursor:pointer}
+  .dot.active{width:28px;background:#2563eb}
+  .click-zone{position:absolute;top:70px;bottom:0;width:13vw;z-index:10}
+  .click-zone.left{left:0}.click-zone.right{right:0}
+  .click-zone:hover{background:linear-gradient(90deg, rgba(37,99,235,.06), transparent)}
+  .click-zone.right:hover{background:linear-gradient(270deg, rgba(37,99,235,.06), transparent)}
+  .hint{
+    position:absolute;top:50%;transform:translateY(-50%);color:rgba(37,99,235,.30);font-size:34px;font-weight:800;pointer-events:none
+  }
+  .click-zone.left .hint{left:16px}.click-zone.right .hint{right:16px}
+  .modal-wrap{
+    position:fixed;inset:0;background:rgba(13,23,42,.44);display:none;align-items:center;justify-content:center;padding:26px;z-index:100
+  }
+  .modal-wrap.show{display:flex}
+  .modal{
+    width:min(860px,95vw);max-height:88vh;overflow:auto;border-radius:28px;background:rgba(255,255,255,.97);box-shadow:0 34px 90px rgba(8,15,35,.30)
+  }
+  .modal-head{position:sticky;top:0;background:rgba(255,255,255,.95);backdrop-filter:blur(10px);padding:18px 22px;border-bottom:1px solid rgba(31,58,120,.10);display:flex;justify-content:space-between;align-items:center}
+  .modal-head b{font-size:24px}
+  .close-btn{border:0;width:38px;height:38px;border-radius:50%;background:#ecf2fb;cursor:pointer;font-size:24px}
+  .modal-body{padding:22px}
+  .demo-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .demo-panel{
+    border:1px solid rgba(31,58,120,.10);border-radius:20px;padding:16px;background:#fff
+  }
+  .demo-panel.good{border-top:6px solid var(--good)} .demo-panel.bad{border-top:6px solid var(--bad)}
+  .demo-panel h4{font-size:22px;margin:0 0 10px}
+  .output{margin-top:10px;padding:12px 14px;border-radius:14px;background:#f5f8fd;color:#30486f;line-height:1.65}
+  @media(max-width:980px){
+    .topbar{height:auto;min-height:70px;padding:10px 14px;align-items:flex-start;flex-direction:column;gap:10px}
+    .nav-tabs{justify-content:flex-start}
+    .slide{inset:12px 12px 68px}.stage{padding:12px 12px 68px}.slide-inner{padding:24px 22px}
+    .grid-2,.grid-3,.focus-wrap,.operator-showcase,.task-box,.demo-grid{grid-template-columns:1fr}
+    .bodytxt,.point-desc,.table td,.table th,.code,.output{font-size:18px}
+    .point-title{font-size:22px}
+    .click-zone{width:10vw}
+    .cover-title{padding:42px 28px}
+    .cover-deco,.cover-deco2,.cover-deco3{display:none}
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <header class="topbar">
+    <div class="brand">
+      <div class="logo">Py</div>
+      <div class="brand-text">
+        <b>Python语言的基础知识</b>
+        <span>第四章 · 程序设计基础</span>
+      </div>
+    </div>
+    <nav class="nav-tabs" id="navTabs"></nav>
+    <div class="tools">
+      <span class="pill" id="pagePill">1 / 12</span>
+      <button class="toolbtn" id="fullscreenBtn">⛶ 全屏</button>
+      <button class="toolbtn" id="helpBtn">⌨ 快捷键</button>
+    </div>
+  </header>
+
+  <div class="click-zone left" id="zonePrev"><span class="hint">‹</span></div>
+  <div class="click-zone right" id="zoneNext"><span class="hint">›</span></div>
+
+  <main class="stage">
+    <!-- 1 cover -->
+    <section class="slide active cover" data-title="封面" data-group="封面">
+      <div class="slide-inner">
+        <div class="cover-wrap">
+          <div class="cover-deco">print("hello")</div>
+          <div class="cover-deco2">x = 2 ** 5</div>
+          <div class="cover-deco3">while / list / function</div>
+          <div class="cover-title">
+            <h1>Python语言的基础知识</h1>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2 -->
+    <section class="slide" data-title="编程注意问题" data-group="基础规则">
+      <div class="slide-inner">
+        <div class="eyebrow">活动 1 · 基础规则</div>
+        <h2>Python编程注意问题</h2>
+        <p class="subtitle">Python 是解释型语言。编程时，下面四条规则最容易出错，也最值得学生在入门阶段马上记住。</p>
+        <div class="point">
+          <div class="point-num">1</div>
+          <div class="point-body">
+            <div class="point-title-row"><div class="point-title">区分大小写</div><button class="example-btn" data-example="case">看例子</button></div>
+            <div class="point-desc"><code>while</code> 与 <code>While</code> 不是同一个东西。关键字大小写写错，程序就会报错。</div>
+          </div>
+        </div>
+        <div class="point">
+          <div class="point-num">2</div>
+          <div class="point-body">
+            <div class="point-title-row"><div class="point-title"><code>#</code> 开头表示注释</div><button class="example-btn" data-example="comment">看例子</button></div>
+            <div class="point-desc">从 <code>#</code> 开始到这一行结束的内容，主要是写给人看的，程序运行时会自动忽略。</div>
+          </div>
+        </div>
+        <div class="point">
+          <div class="point-num">3</div>
+          <div class="point-body">
+            <div class="point-title-row"><div class="point-title">缩进有语法意义</div><button class="example-btn" data-example="indent">看例子</button></div>
+            <div class="point-desc">每行开头的空格或 Tab，不只是为了美观，它表示语句之间的从属关系。</div>
+          </div>
+        </div>
+        <div class="point">
+          <div class="point-num">4</div>
+          <div class="point-body">
+            <div class="point-title-row"><div class="point-title">语法符号必须用英文符号</div><button class="example-btn" data-example="punctuation">看例子</button></div>
+            <div class="point-desc">程序中的冒号、逗号、括号等要用英文半角形式，例如 <code>:</code> 而不是 <code>：</code>。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="slide" data-title="错误提示" data-group="基础规则">
+      <div class="slide-inner">
+        <div class="eyebrow">活动 1 · 学会读报错</div>
+        <h2>遇到不懂的错误提示怎么办？</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>先看最后一行</h3>
+            <p class="point-desc">最后一行往往就是“错误类型”，例如 <b>SyntaxError</b>、<b>NameError</b>、<b>IndentationError</b>。</p>
+            <button class="example-btn" data-example="errors">看常见报错</button>
+          </div>
+          <div class="card">
+            <h3>再看出错位置</h3>
+            <p class="point-desc">报错信息通常会告诉你出错的行号，有时还会给出箭头，帮助你更快定位问题。</p>
+            <button class="example-btn" data-example="trace">看定位示例</button>
+          </div>
+          <div class="card">
+            <h3>不懂时可以借助 AI</h3>
+            <p class="point-desc">把“报错信息 + 相关代码 + 你想做什么”一起发给 AI，会比只发一行英文报错更有效。</p>
+            <button class="example-btn" data-example="askai">看提问模板</button>
+          </div>
+          <div class="card">
+            <h3>但不要完全依赖 AI</h3>
+            <div class="callout danger">课堂测试不能用 AI，所以真正要学会的是：看错误类型、找行号、对照语法，再自己改正。</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4 -->
+    <section class="slide" data-title="常量和变量" data-group="常量变量">
+      <div class="slide-inner">
+        <div class="eyebrow">4.1.1</div>
+        <h2>Python的常量和变量</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>1. 常量</h3>
+            <p class="point-desc">在程序运行过程中，其值始终不发生变化的量。常见的数值或字符串都可以作为常量出现。</p>
+            <div class="info-strip"><span>45</span><span>-30.2001</span><span>'Hello'</span></div>
+            <button class="example-btn" data-example="constant">看例子</button>
+          </div>
+          <div class="card">
+            <h3>2. 变量</h3>
+            <p class="point-desc">在程序运行过程中，其值可以变化的量。变量由“名字”和“值”组成。</p>
+            <div class="info-strip"><span>名字：score</span><span>值：85</span></div>
+            <button class="example-btn" data-example="variable">看例子</button>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:18px">课堂提问：执行 <b>score = 60</b> 后，又执行 <b>score = 85</b>，变的是变量的名字，还是变量保存的值？</div>
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="slide" data-title="数值类型" data-group="数据类型">
+      <div class="slide-inner">
+        <div class="eyebrow">4.1.2</div>
+        <h2>Python的数据类型：数值</h2>
+        <p class="subtitle">Python 常见的数据类型有 Number、String、List、Tuple、Sets、Dictionary 等。本页重点认识三种数值类型。</p>
+        <div class="grid-3">
+          <div class="card">
+            <span class="tag">int</span>
+            <h3 style="margin-top:12px">整型</h3>
+            <p class="point-desc">整数，不带小数部分。例如：<code>18</code>、<code>-3</code>。</p>
+            <button class="example-btn" data-example="int">看例子</button>
+          </div>
+          <div class="card">
+            <span class="tag">float</span>
+            <h3 style="margin-top:12px">浮点型</h3>
+            <p class="point-desc">带有小数部分的数。例如：<code>2.5</code>、<code>9.9</code>。</p>
+            <button class="example-btn" data-example="float">看例子</button>
+          </div>
+          <div class="card">
+            <span class="tag">complex</span>
+            <h3 style="margin-top:12px">复数</h3>
+            <p class="point-desc">由实部和虚部组成，可以写成 <code>a+bj</code> 的形式。</p>
+            <button class="example-btn" data-example="complex">看例子</button>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:18px">如果不确定某个数据属于哪一类，可以用 <b>type()</b> 来验证。<button class="example-btn" data-example="typecheck" style="margin-left:10px">立即演示</button></div>
+      </div>
+    </section>
+
+    <!-- 6 -->
+    <section class="slide" data-title="字符串和列表" data-group="数据类型">
+      <div class="slide-inner">
+        <div class="eyebrow">4.1.2</div>
+        <h2>String（字符串）与 List（列表）</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>(2) String（字符串）</h3>
+            <p class="point-desc">字符串是被单引号或双引号括起来的文本。字符串的索引从 0 开始，<code>-1</code> 表示最后一个位置。</p>
+            <div class="code">text = <span class="str">"Python"</span>
+text[<span class="num">0</span>]   →  <span class="str">'P'</span>
+text[<span class="num">-1</span>]  →  <span class="str">'n'</span></div>
+            <button class="example-btn" data-example="string">看索引例子</button>
+          </div>
+          <div class="card">
+            <h3>(3) List（列表）</h3>
+            <p class="point-desc">列表写在方括号 <code>[ ]</code> 中，元素之间用逗号分隔。列表中的元素类型可以不同。</p>
+            <div class="code">student = [<span class="str">'Li Hua'</span>, <span class="num">16</span>, <span class="num">92.5</span>, <span class="kw">True</span>]</div>
+            <button class="example-btn" data-example="list">看列表例子</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7 -->
+    <section class="slide" data-title="集合和字典" data-group="数据类型">
+      <div class="slide-inner">
+        <div class="eyebrow">4.1.2</div>
+        <h2>Sets（集合）与 Dictionary（字典）</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>(4) Sets（集合）</h3>
+            <p class="point-desc">集合是无序且不重复的元素序列，常用来判断成员关系或对数据去重。</p>
+            <button class="example-btn" data-example="set">看自动去重</button>
+            <button class="example-btn" data-example="emptyset" style="margin-left:8px">看空集合陷阱</button>
+          </div>
+          <div class="card">
+            <h3>(5) Dictionary（字典）</h3>
+            <p class="point-desc">字典是一组“键：值”的配对结构。访问数据时，不是靠位置，而是靠键。</p>
+            <button class="example-btn" data-example="dict">看键值访问</button>
+            <button class="example-btn" data-example="dictkey" style="margin-left:8px">看键唯一</button>
+          </div>
+        </div>
+        <div class="callout" style="margin-top:18px"><b>对比记忆：</b>列表靠索引取值，字典靠键取值。</div>
+      </div>
+    </section>
+
+    <!-- 8 -->
+    <section class="slide" data-title="运算符与表达式" data-group="运算符">
+      <div class="slide-inner">
+        <div class="eyebrow">4.1.3</div>
+        <h2>Python的运算符与表达式</h2>
+        <div class="focus-wrap">
+          <div class="focus-card">
+            <p class="bodytxt">在 Python 中，对常量或变量进行运算时所使用的符号，叫做<b>运算符</b>；参与运算的对象，叫做<b>操作数</b>；由运算符和操作数组成的式子，叫做<b>表达式</b>。</p>
+            <div class="code" style="margin-top:14px">a = <span class="num">3</span>
+b = <span class="num">5</span>
+result = (a + b) * <span class="num">2</span></div>
+            <div class="info-strip"><span>操作数：a、b、2</span><span>运算符：+、*</span><span>表达式：(a+b)*2</span></div>
+          </div>
+          <div class="focus-card">
+            <h3>课堂速记</h3>
+            <div class="point-desc">看见“符号”先想：它是让程序做什么事情？</div>
+            <div class="point-desc">看见“数据”再想：它们是谁在参与运算？</div>
+            <div class="point-desc">最后再想：这些东西连起来以后，形成了一个怎样的表达式？</div>
+            <button class="example-btn" data-example="expression" style="margin-top:10px">看计算过程</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="slide" data-title="常用运算符" data-group="运算符">
+      <div class="slide-inner">
+        <div class="eyebrow">4.1.3</div>
+        <h2>三类常用运算符</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h3>1. 算术运算符</h3>
+            <div class="info-strip"><span>+</span><span>-</span><span>*</span><span>/</span><span>%</span><span>**</span><span>//</span></div>
+            <p class="point-desc">除了常见的加减乘除，学生更需要特别认识：幂运算、整除和求余。</p>
+            <button class="example-btn" data-example="arithmetic">看全部结果</button>
+          </div>
+          <div class="card">
+            <h3>2. 逻辑运算符</h3>
+            <div class="info-strip"><span>and</span><span>or</span><span>not</span></div>
+            <p class="point-desc">它们用于连接或反转条件，结果只有两种：True 或 False。</p>
+            <button class="example-btn" data-example="logic">看真假示例</button>
+          </div>
+          <div class="card">
+            <h3>3. 关系运算符</h3>
+            <div class="info-strip"><span>&gt;</span><span>&gt;=</span><span>&lt;</span><span>&lt;=</span><span>==</span><span>!=</span></div>
+            <p class="point-desc">用于比较大小或判断是否相等，运算结果也是 True 或 False。</p>
+            <button class="example-btn" data-example="relation">看比较示例</button>
+          </div>
+        </div>
+
+        <div class="operator-showcase">
+          <div class="operator-card">
+            <b>**</b>
+            <div class="big-demo">2 ** 5 = 32</div>
+            <div class="small">表示“2 的 5 次方”。这类写法学生往往第一次见，需要重点强调。</div>
+          </div>
+          <div class="operator-card">
+            <b>//</b>
+            <div class="big-demo">7 // 3 = 2</div>
+            <div class="small">表示整除。它只保留整数部分，不保留小数部分。</div>
+          </div>
+          <div class="operator-card">
+            <b>%</b>
+            <div class="big-demo">7 % 3 = 1</div>
+            <div class="small">表示求余，也就是“取余数”。在判断奇偶数时非常常见。</div>
+          </div>
+        </div>
+
+        <div class="callout" style="margin-top:18px">特别提醒：<code>=</code> 表示赋值，<code>==</code> 才表示“是否相等”。 <button class="example-btn" data-example="equal" style="margin-left:10px">对比一下</button></div>
+      </div>
+    </section>
+
+    <!-- 10 -->
+    <section class="slide" data-title="常用函数" data-group="函数">
+      <div class="slide-inner">
+        <div class="eyebrow">4.1.4</div>
+        <h2>Python的函数</h2>
+        <p class="subtitle">点击函数名称，可以展开它的英文含义、作用，以及一个最典型的课堂演示例子。</p>
+        <table class="table">
+          <thead><tr><th style="width:24%">函数名称</th><th>作用说明</th><th style="width:120px">演示</th></tr></thead>
+          <tbody>
+            <tr><td><button class="function-name" data-example="abs">abs(x)</button></td><td>返回 x 的绝对值</td><td><button class="example-btn" data-example="abs">演示</button></td></tr>
+            <tr><td><button class="function-name" data-example="len">len(x)</button></td><td>返回对象的长度</td><td><button class="example-btn" data-example="len">演示</button></td></tr>
+            <tr><td><button class="function-name" data-example="min">min(x)</button></td><td>返回最小值</td><td><button class="example-btn" data-example="min">演示</button></td></tr>
+            <tr><td><button class="function-name" data-example="max">max(x)</button></td><td>返回最大值</td><td><button class="example-btn" data-example="max">演示</button></td></tr>
+            <tr><td><button class="function-name" data-example="intfunc">int(x)</button></td><td>转换成整型</td><td><button class="example-btn" data-example="intfunc">演示</button></td></tr>
+            <tr><td><button class="function-name" data-example="floatfunc">float(x)</button></td><td>转换成浮点型</td><td><button class="example-btn" data-example="floatfunc">演示</button></td></tr>
+            <tr><td><button class="function-name" data-example="sum">sum(x)</button></td><td>计算元素总和</td><td><button class="example-btn" data-example="sum">演示</button></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="slide" data-title="本课学习任务" data-group="课堂任务">
+      <div class="slide-inner">
+        <div class="eyebrow">课堂实践</div>
+        <h2>本课学习任务</h2>
+        <div class="task-box">
+          <div class="card">
+            <div class="big-icon">✓</div>
+            <h3>任务 1：掌握 Python 基础知识</h3>
+            <p class="point-desc">回顾大小写、注释、缩进、常量与变量、数据类型、运算符和常用函数。</p>
+          </div>
+          <div class="card">
+            <div class="big-icon">⌨</div>
+            <h3>任务 2：在 PYOJ 上完成课堂练习</h3>
+            <p class="point-desc">在线测评平台对输入输出有严格要求，程序不能输出题目没有要求的多余信息。</p>
+            <button class="example-btn" data-example="oj">看输入输出示例</button>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top:18px">
+          <div class="card">
+            <h3>平台提示</h3>
+            <p class="point-desc">做题前要先读懂输入输出要求，再编写程序。</p>
+          </div>
+          <div class="card">
+            <h3>课堂提醒</h3>
+            <p class="point-desc">如果程序结果不正确，先检查：是否读错题、是否多输出了内容、是否用了错误的数据类型。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12 -->
+    <section class="slide thanks" data-title="结束页" data-group="结束">
+      <div class="slide-inner">
+        <div class="thanks-wrap">
+          <div class="thanks-box">
+            <h1>本节课到此结束</h1>
+            <p>谢谢大家</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <nav class="bottom-nav">
+      <button class="nav-btn" id="prevBtn">← 上一页</button>
+      <div class="dots" id="dots"></div>
+      <button class="nav-btn primary" id="nextBtn">下一页 →</button>
+    </nav>
+  </main>
+</div>
+
+<div class="modal-wrap" id="modalWrap" role="dialog" aria-modal="true">
+  <div class="modal">
+    <div class="modal-head"><b id="modalTitle">例子</b><button class="close-btn" id="closeModal">×</button></div>
+    <div class="modal-body" id="modalBody"></div>
+  </div>
+</div>
+
+<script>
+const examples = {
+  case: {
+    title:"例子：大小写写错会怎样？",
+    html:`<div class="demo-grid">
+      <div class="demo-panel good"><h4>✓ 正确</h4><div class="code"><span class="kw">while</span> <span class="kw">False</span>:
+    <span class="kw">pass</span></div><div class="output">程序可以被正确识别。</div></div>
+      <div class="demo-panel bad"><h4>✕ 错误</h4><div class="code">While <span class="kw">False</span>:
+    <span class="kw">pass</span></div><div class="output">SyntaxError: invalid syntax</div></div>
+    </div><p class="point-desc" style="margin-top:12px">关键字必须按规定大小写书写，不能把 <code>while</code> 随意写成 <code>While</code>。</p>`
+  },
+  comment: {
+    title:"例子：# 表示注释",
+    html:`<div class="code"><span class="cm"># 下面这一行会输出学生姓名</span>
+name = <span class="str">"Xiaoming"</span>
+<span class="fn">print</span>(name)  <span class="cm"># 这是行尾注释</span></div>
+<div class="output">运行结果：Xiaoming</div>`
+  },
+  indent: {
+    title:"例子：缩进不能省略",
+    html:`<div class="demo-grid">
+      <div class="demo-panel good"><h4>✓ 正确</h4><div class="code"><span class="kw">if</span> score >= <span class="num">60</span>:
+    <span class="fn">print</span>(<span class="str">"及格"</span>)</div><div class="output">print 是 if 语句块内部的内容。</div></div>
+      <div class="demo-panel bad"><h4>✕ 错误</h4><div class="code"><span class="kw">if</span> score >= <span class="num">60</span>:
+<span class="fn">print</span>(<span class="str">"及格"</span>)</div><div class="output">IndentationError: expected an indented block</div></div>
+    </div>`
+  },
+  punctuation: {
+    title:"例子：中文符号会报错",
+    html:`<div class="demo-grid">
+      <div class="demo-panel good"><h4>✓ 英文冒号</h4><div class="code"><span class="kw">if</span> x > <span class="num">0</span>:
+    <span class="fn">print</span>(x)</div></div>
+      <div class="demo-panel bad"><h4>✕ 中文冒号</h4><div class="code"><span class="kw">if</span> x > <span class="num">0</span>：
+    <span class="fn">print</span>(x)</div><div class="output">SyntaxError: invalid character '：'</div></div>
+    </div>`
+  },
+  errors: {
+    title:"4 种常见报错",
+    html:`<table class="table"><thead><tr><th>错误类型</th><th>大致含义</th><th>典型情形</th></tr></thead><tbody>
+      <tr><td>SyntaxError</td><td>语法错误</td><td>例如 if 后面漏掉冒号</td></tr>
+      <tr><td>NameError</td><td>名字没定义</td><td>变量名拼错了</td></tr>
+      <tr><td>IndentationError</td><td>缩进错误</td><td>语句块没有正确缩进</td></tr>
+      <tr><td>TypeError</td><td>类型错误</td><td>把不兼容的数据放在一起运算</td></tr>
+    </tbody></table>`
+  },
+  trace: {
+    title:"从报错里定位问题",
+    html:`<div class="code">File <span class="str">"main.py"</span>, line <span class="num">2</span>
+    <span class="fn">print</span>(score)
+          ^
+NameError: name <span class="str">'score'</span> is not defined</div>
+<div class="output">先看 line 2，再看箭头附近，最后看错误类型 NameError。</div>`
+  },
+  askai: {
+    title:"向 AI 提问时，可以这样发",
+    html:`<div class="callout">我正在学习 Python。下面代码本来想输入一个分数并判断是否及格，但程序报了 NameError。请只解释错误原因，并提示我应该检查哪一行，不要直接替我重写整个程序。</div>
+<div class="code" style="margin-top:12px">score = <span class="fn">input</span>()
+<span class="kw">if</span> scroe >= <span class="num">60</span>:
+    <span class="fn">print</span>(<span class="str">"及格"</span>)</div>`
+  },
+  constant: {
+    title:"例子：常量",
+    html:`<div class="code">radius = <span class="num">5</span>
+area = <span class="num">3.14159</span> * radius ** <span class="num">2</span>
+message = <span class="str">"Hello"</span></div>
+<div class="output">像 5、3.14159、"Hello" 这样直接写在程序里的固定值，可以先把它们理解为常量。</div>`
+  },
+  variable: {
+    title:"例子：变量",
+    html:`<div class="code">score = <span class="num">60</span>
+<span class="fn">print</span>(score)
+
+score = <span class="num">85</span>
+<span class="fn">print</span>(score)</div>
+<div class="output">60<br>85</div>`
+  },
+  int:{title:"int：整型",html:`<div class="code">age = <span class="num">16</span>
+students = <span class="num">45</span></div><div class="output">type(age) → &lt;class 'int'&gt;</div>`},
+  float:{title:"float：浮点型",html:`<div class="code">height = <span class="num">1.72</span>
+price = <span class="num">9.9</span></div><div class="output">type(height) → &lt;class 'float'&gt;</div>`},
+  complex:{title:"complex：复数",html:`<div class="code">z = <span class="num">3</span> + <span class="num">4</span>j
+<span class="fn">print</span>(z.real)
+<span class="fn">print</span>(z.imag)</div><div class="output">3.0<br>4.0</div>`},
+  typecheck:{title:"用 type() 验证数据类型",html:`<div class="code"><span class="fn">print</span>(<span class="fn">type</span>(<span class="num">18</span>))
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="num">18.0</span>))
+<span class="fn">print</span>(<span class="fn">type</span>(<span class="num">3</span>+<span class="num">4</span>j))</div><div class="output">&lt;class 'int'&gt;<br>&lt;class 'float'&gt;<br>&lt;class 'complex'&gt;</div>`},
+  string:{
+    title:"字符串索引",
+    html:`<div class="code">text = <span class="str">"Python"</span></div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin:16px 0">
+      ${["P","y","t","h","o","n"].map((x,i)=>`<div style="border:1px solid rgba(37,99,235,.10);border-radius:16px;text-align:center;padding:16px 8px;background:#fff"><b style="font-size:34px">${x}</b><div style="color:#5b7098;font-size:15px;margin-top:8px">索引 ${i}</div></div>`).join("")}
+    </div>
+    <div class="output">text[0] → 'P'　　text[-1] → 'n'</div>`
+  },
+  list:{
+    title:"列表例子",
+    html:`<div class="code">student = [<span class="str">"Li Hua"</span>, <span class="num">16</span>, <span class="num">92.5</span>, <span class="kw">True</span>]
+<span class="fn">print</span>(student[<span class="num">0</span>])
+<span class="fn">print</span>(student[<span class="num">2</span>])</div>
+<div class="output">Li Hua<br>92.5</div>`
+  },
+  set:{
+    title:"集合：自动去重",
+    html:`<div class="code">nums = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">3</span>}
+<span class="fn">print</span>(nums)</div>
+<div class="output">结果中只保留不重复元素，例如：{1, 2, 3}</div>`
+  },
+  emptyset:{
+    title:"为什么空集合不是 {} ?",
+    html:`<div class="code">a = {}
+b = <span class="fn">set</span>()
+
+<span class="fn">print</span>(<span class="fn">type</span>(a))
+<span class="fn">print</span>(<span class="fn">type</span>(b))</div>
+<div class="output">&lt;class 'dict'&gt;<br>&lt;class 'set'&gt;</div>`
+  },
+  dict:{
+    title:"字典：通过键取值",
+    html:`<div class="code">student = {
+    <span class="str">"name"</span>: <span class="str">"Li Hua"</span>,
+    <span class="str">"score"</span>: <span class="num">92</span>
+}
+<span class="fn">print</span>(student[<span class="str">"score"</span>])</div>
+<div class="output">92</div>`
+  },
+  dictkey:{
+    title:"键必须唯一",
+    html:`<div class="code">d = {<span class="str">"name"</span>: <span class="str">"A"</span>, <span class="str">"name"</span>: <span class="str">"B"</span>}
+<span class="fn">print</span>(d)</div>
+<div class="output">{'name': 'B'}</div>`
+  },
+  expression:{
+    title:"表达式示例",
+    html:`<div class="code">a = <span class="num">3</span>
+b = <span class="num">5</span>
+result = (a + b) * <span class="num">2</span></div>
+<div class="output">先算 (3 + 5) = 8，再算 8 × 2 = 16，所以 result = 16。</div>`
+  },
+  arithmetic:{
+    title:"算术运算符示例",
+    html:`<div class="code">a = <span class="num">7</span>
+b = <span class="num">3</span>
+
+a + b   <span class="cm"># 10</span>
+a - b   <span class="cm"># 4</span>
+a * b   <span class="cm"># 21</span>
+a / b   <span class="cm"># 2.333...</span>
+a % b   <span class="cm"># 1</span>
+a ** b  <span class="cm"># 343</span>
+a // b  <span class="cm"># 2</span></div>`
+  },
+  logic:{
+    title:"逻辑运算符示例",
+    html:`<table class="table"><thead><tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th></tr></thead><tbody>
+      <tr><td>True</td><td>True</td><td>True</td><td>True</td></tr>
+      <tr><td>True</td><td>False</td><td>False</td><td>True</td></tr>
+      <tr><td>False</td><td>True</td><td>False</td><td>True</td></tr>
+      <tr><td>False</td><td>False</td><td>False</td><td>False</td></tr>
+    </tbody></table>
+    <div class="output">not True → False；not False → True</div>`
+  },
+  relation:{
+    title:"关系运算符示例",
+    html:`<div class="code">a = <span class="num">8</span>
+b = <span class="num">5</span>
+
+a > b   <span class="cm"># True</span>
+a >= b  <span class="cm"># True</span>
+a < b   <span class="cm"># False</span>
+a <= b  <span class="cm"># False</span>
+a == b  <span class="cm"># False</span>
+a != b  <span class="cm"># True</span></div>`
+  },
+  equal:{
+    title:"= 与 == 的区别",
+    html:`<div class="demo-grid">
+      <div class="demo-panel"><h4>= 赋值</h4><div class="code">score = <span class="num">90</span></div><div class="output">把 90 保存到变量 score 中。</div></div>
+      <div class="demo-panel"><h4>== 比较</h4><div class="code">score == <span class="num">90</span></div><div class="output">判断 score 是否等于 90，结果是 True 或 False。</div></div>
+    </div>`
+  },
+  abs:{
+    title:"abs(x) — absolute：绝对值",
+    html:`<div class="callout"><b>abs</b> 来自 <b>absolute</b>，意思是“绝对的”，在这里就是“绝对值”。</div>
+<div class="code" style="margin-top:12px"><span class="fn">abs</span>(-<span class="num">8</span>)</div><div class="output">8</div>`
+  },
+  len:{
+    title:"len(x) — length：长度",
+    html:`<div class="callout"><b>len</b> 是 <b>length</b> 的常见缩写，意思是“长度”。</div>
+<div class="code" style="margin-top:12px"><span class="fn">len</span>(<span class="str">"Python"</span>)</div><div class="output">6</div>`
+  },
+  min:{
+    title:"min(x) — minimum：最小值",
+    html:`<div class="callout"><b>min</b> 来自 <b>minimum</b>，意思是“最小值”。</div>
+<div class="code" style="margin-top:12px"><span class="fn">min</span>([<span class="num">7</span>, <span class="num">2</span>, <span class="num">9</span>])</div><div class="output">2</div>`
+  },
+  max:{
+    title:"max(x) — maximum：最大值",
+    html:`<div class="callout"><b>max</b> 来自 <b>maximum</b>，意思是“最大值”。</div>
+<div class="code" style="margin-top:12px"><span class="fn">max</span>([<span class="num">7</span>, <span class="num">2</span>, <span class="num">9</span>])</div><div class="output">9</div>`
+  },
+  intfunc:{
+    title:"int(x) — integer：整数",
+    html:`<div class="callout"><b>int</b> 来自 <b>integer</b>，意思是“整数”。</div>
+<div class="code" style="margin-top:12px"><span class="fn">int</span>(<span class="num">3.9</span>)</div><div class="output">3</div><div class="output">注意：这里是直接取整数部分，不是四舍五入。</div>`
+  },
+  floatfunc:{
+    title:"float(x) — floating-point：浮点数",
+    html:`<div class="callout"><b>float</b> 表示 <b>floating-point number</b>，也就是浮点数。</div>
+<div class="code" style="margin-top:12px"><span class="fn">float</span>(<span class="str">"3.5"</span>)</div><div class="output">3.5</div>`
+  },
+  sum:{
+    title:"sum(x) — sum：求和",
+    html:`<div class="callout"><b>sum</b> 本身就是英文单词，意思是“总和”。</div>
+<div class="code" style="margin-top:12px"><span class="fn">sum</span>([<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>])</div><div class="output">60</div>`
+  },
+  oj:{
+    title:"在线测评：不要输出多余文字",
+    html:`<div class="demo-grid">
+      <div class="demo-panel good"><h4>✓ 推荐写法</h4><div class="code">a = <span class="fn">int</span>(<span class="fn">input</span>())
+b = <span class="fn">int</span>(<span class="fn">input</span>())
+<span class="fn">print</span>(a + b)</div><div class="output">输入：2、3<br>输出：5</div></div>
+      <div class="demo-panel bad"><h4>✕ 容易判错</h4><div class="code">a = <span class="fn">int</span>(<span class="fn">input</span>(<span class="str">"Please input a number: "</span>))</div><div class="output">多输出了提示文字，在线评测时可能与标准答案不一致。</div></div>
+    </div>`
+  }
+};
+
+const sectionDefs = [
+  "封面","基础规则","常量变量","数据类型","运算符","函数","课堂任务","结束"
+];
+
+const slides = [...document.querySelectorAll('.slide')];
+let current = 0;
+
+const pagePill = document.getElementById('pagePill');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const dots = document.getElementById('dots');
+const navTabs = document.getElementById('navTabs');
+const modalWrap = document.getElementById('modalWrap');
+const modalTitle = document.getElementById('modalTitle');
+const modalBody = document.getElementById('modalBody');
+
+slides.forEach((s,i)=>{
+  const d = document.createElement('button');
+  d.className = 'dot';
+  d.title = `第 ${i+1} 页`;
+  d.onclick = ()=>go(i);
+  dots.appendChild(d);
+});
+
+sectionDefs.forEach(group=>{
+  const indexes = slides.map((s,idx)=>[s.dataset.group,idx]).filter(x=>x[0]===group).map(x=>x[1]);
+  if(indexes.length){
+    const btn = document.createElement('button');
+    btn.className = 'tab';
+    btn.textContent = group;
+    btn.onclick = ()=>go(indexes[0]);
+    btn.dataset.group = group;
+    navTabs.appendChild(btn);
+  }
+});
+
+function updateTabs(){
+  const g = slides[current].dataset.group;
+  [...navTabs.children].forEach(btn=>btn.classList.toggle('active', btn.dataset.group===g));
+}
+
+function go(i){
+  current = Math.max(0, Math.min(slides.length-1, i));
+  slides.forEach((s,idx)=>s.classList.toggle('active', idx===current));
+  [...dots.children].forEach((d,idx)=>d.classList.toggle('active', idx===current));
+  pagePill.textContent = `${current+1} / ${slides.length}`;
+  prevBtn.disabled = current===0;
+  nextBtn.disabled = current===slides.length-1;
+  updateTabs();
+}
+
+function openExample(key){
+  const ex = examples[key];
+  if(!ex) return;
+  modalTitle.innerHTML = ex.title;
+  modalBody.innerHTML = ex.html;
+  modalWrap.classList.add('show');
+}
+
+document.addEventListener('click',e=>{
+  const btn = e.target.closest('[data-example]');
+  if(btn) openExample(btn.dataset.example);
+});
+
+document.getElementById('closeModal').onclick = ()=>modalWrap.classList.remove('show');
+modalWrap.addEventListener('click',e=>{ if(e.target===modalWrap) modalWrap.classList.remove('show'); });
+
+prevBtn.onclick = ()=>go(current-1);
+nextBtn.onclick = ()=>go(current+1);
+document.getElementById('zonePrev').onclick = ()=>go(current-1);
+document.getElementById('zoneNext').onclick = ()=>go(current+1);
+
+document.getElementById('fullscreenBtn').onclick = async ()=>{
+  if(!document.fullscreenElement){
+    await document.documentElement.requestFullscreen().catch(()=>{});
+  }else{
+    await document.exitFullscreen().catch(()=>{});
+  }
+};
+
+document.getElementById('helpBtn').onclick = ()=>{
+  modalTitle.textContent = "快捷键与操作";
+  modalBody.innerHTML = `<div class="point"><div class="point-num">←</div><div class="point-body"><div class="point-title">上一页</div></div></div>
+  <div class="point"><div class="point-num">→</div><div class="point-body"><div class="point-title">下一页</div></div></div>
+  <div class="point"><div class="point-num">␣</div><div class="point-body"><div class="point-title">空格：下一页</div></div></div>
+  <div class="point"><div class="point-num">Esc</div><div class="point-body"><div class="point-title">关闭弹窗 / 退出全屏</div></div></div>
+  <div class="callout" style="margin-top:16px">还可以直接点击屏幕左侧或右侧区域进行翻页。</div>`;
+  modalWrap.classList.add('show');
+};
+
+document.addEventListener('keydown',e=>{
+  if(modalWrap.classList.contains('show')){
+    if(e.key==="Escape") modalWrap.classList.remove('show');
+    return;
+  }
+  if(e.key==="ArrowRight" || e.key==="PageDown" || e.key===" "){e.preventDefault();go(current+1);}
+  if(e.key==="ArrowLeft" || e.key==="PageUp"){e.preventDefault();go(current-1);}
+  if(e.key==="Home"){go(0)}
+  if(e.key==="End"){go(slides.length-1)}
+});
+
+go(0);
+</script>
+</body>
+</html>
