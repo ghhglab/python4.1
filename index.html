@@ -127,14 +127,22 @@
   .cover-deco4{left:82px;bottom:76px;padding:13px 17px;font:700 16px/1.2 Consolas,monospace;color:#54719c;transform:rotate(-6deg)}
   #app.cover-mode .bottom-nav{opacity:0;pointer-events:none;transform:translateY(18px)}
   .bottom-nav{transition:opacity .18s ease,transform .18s ease}
-  #app.cover-mode #zonePrev{pointer-events:none}
-  #app.cover-mode #zonePrev .hint{opacity:0}
-  .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-  .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .grid-2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;align-items:stretch}
+  .grid-3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
   .card,.point,.focus-card,.operator-card{
     border-radius:22px;background:var(--paper-strong);border:1px solid rgba(37,99,235,.07);box-shadow:0 10px 30px rgba(18,38,81,.06)
   }
-  .card{padding:22px}
+  .card{padding:22px;display:flex;flex-direction:column;min-width:0;height:100%}
+  .card > .code{margin-top:4px}
+  .card-actions{
+    display:flex;align-items:center;flex-wrap:wrap;gap:10px;
+    margin-top:auto;padding-top:18px;min-height:54px
+  }
+  .card-actions .example-btn{margin:0 !important}
+  .action-callout{
+    display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap
+  }
+  .action-callout .example-btn{flex:0 0 auto;margin:0 !important}
   .point{display:flex;gap:16px;align-items:flex-start;padding:18px 20px}
   .point + .point{margin-top:14px}
   .point-num{
@@ -143,14 +151,24 @@
     color:var(--blue);display:grid;place-items:center;font-weight:900;font-size:20px
   }
   .point-body{flex:1;min-width:0}
-  .point-title-row{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+  .point-title-row{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:18px}
   .point-title{font-weight:900;font-size:26px;line-height:1.35}
   .example-btn{
-    border:0;border-radius:14px;padding:11px 14px;background:linear-gradient(135deg,#2563eb,#4f8cff);
-    color:#fff;cursor:pointer;font-weight:800;font-size:16px;box-shadow:0 10px 20px rgba(37,99,235,.20)
+    border:0;border-radius:14px;padding:11px 15px;background:linear-gradient(135deg,#2563eb,#4f8cff);
+    color:#fff;cursor:pointer;font-weight:800;font-size:16px;line-height:1.25;
+    box-shadow:0 10px 20px rgba(37,99,235,.20);
+    white-space:nowrap;max-width:100%;position:relative;z-index:2
   }
+  .example-btn:hover{transform:translateY(-1px);box-shadow:0 12px 24px rgba(37,99,235,.25)}
+  .example-btn:active{transform:translateY(0)}
   .example-btn::before{content:"▶ ";font-size:11px}
-  .tag{display:inline-flex;padding:6px 10px;border-radius:999px;background:rgba(37,99,235,.10);color:#1d4ed8;font-size:14px;font-weight:800}
+  .tag{
+    display:inline-flex;align-items:center;justify-content:center;align-self:flex-start;
+    min-width:88px;padding:9px 15px;border-radius:999px;
+    background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(96,165,250,.16));
+    color:#1d4ed8;font:900 24px/1 Consolas,"SFMono-Regular",Menlo,monospace;
+    letter-spacing:.01em
+  }
   .code{
     background:#0f172a;color:#e5eefb;border-radius:18px;padding:16px 18px;font-family:Consolas,"SFMono-Regular",Menlo,monospace;
     line-height:1.72;white-space:pre-wrap;overflow:auto;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)
@@ -206,14 +224,22 @@
   .dots{display:flex;gap:7px;margin:0 8px}
   .dot{width:10px;height:10px;border-radius:99px;border:0;background:rgba(65,95,146,.24);padding:0;cursor:pointer}
   .dot.active{width:28px;background:#2563eb}
-  .click-zone{position:absolute;top:70px;bottom:0;width:13vw;z-index:10}
-  .click-zone.left{left:0}.click-zone.right{right:0}
-  .click-zone:hover{background:linear-gradient(90deg, rgba(37,99,235,.06), transparent)}
-  .click-zone.right:hover{background:linear-gradient(270deg, rgba(37,99,235,.06), transparent)}
-  .hint{
-    position:absolute;top:50%;transform:translateY(-50%);color:rgba(37,99,235,.30);font-size:34px;font-weight:800;pointer-events:none
+  .edge-nav{
+    position:absolute;top:50%;transform:translateY(-50%);z-index:28;
+    width:48px;height:72px;border:0;border-radius:18px;cursor:pointer;
+    display:grid;place-items:center;
+    background:rgba(255,255,255,.76);backdrop-filter:blur(12px);
+    color:#315b9d;font-size:34px;font-weight:800;
+    box-shadow:0 12px 30px rgba(18,38,81,.12);
+    border:1px solid rgba(255,255,255,.82);
+    transition:.16s ease;
   }
-  .click-zone.left .hint{left:16px}.click-zone.right .hint{right:16px}
+  .edge-nav:hover{transform:translateY(-50%) scale(1.04);background:rgba(255,255,255,.94);color:#2563eb}
+  .edge-nav:active{transform:translateY(-50%) scale(.98)}
+  .edge-nav.left{left:8px}
+  .edge-nav.right{right:8px}
+  .edge-nav:disabled{opacity:.28;cursor:default;pointer-events:none}
+  #app.cover-mode .edge-nav.left{opacity:0;pointer-events:none}
   .modal-wrap{
     position:fixed;inset:0;background:rgba(13,23,42,.44);display:none;align-items:center;justify-content:center;padding:26px;z-index:100
   }
@@ -237,9 +263,13 @@
     .nav-tabs{justify-content:flex-start}
     .slide{inset:12px 12px 68px}.stage{padding:12px 12px 68px}.slide-inner{padding:24px 22px}
     .grid-2,.grid-3,.focus-wrap,.operator-showcase,.task-box,.demo-grid{grid-template-columns:1fr}
+    .point-title-row{grid-template-columns:1fr}
+    .point-title-row .example-btn{justify-self:start}
+    .action-callout{align-items:flex-start}
     .bodytxt,.point-desc,.table td,.table th,.code,.output{font-size:18px}
     .point-title{font-size:22px}
-    .click-zone{width:10vw}
+    .edge-nav{width:42px;height:62px;font-size:30px}
+    .edge-nav.left{left:4px}.edge-nav.right{right:4px}
     .cover-wrap{min-height:500px;padding:16px}
     .cover-title{width:min(92vw,760px);padding:42px 30px}
     .cover-sub{font-size:18px}
@@ -265,8 +295,8 @@
     </div>
   </header>
 
-  <div class="click-zone left" id="zonePrev"><span class="hint">‹</span></div>
-  <div class="click-zone right" id="zoneNext"><span class="hint">›</span></div>
+  <button class="edge-nav left" id="edgePrev" aria-label="上一页" title="上一页">‹</button>
+  <button class="edge-nav right" id="edgeNext" aria-label="下一页" title="下一页">›</button>
 
   <main class="stage">
     <!-- 1 cover -->
@@ -334,17 +364,17 @@
           <div class="card">
             <h3>先看最后一行</h3>
             <p class="point-desc">最后一行往往就是“错误类型”，例如 <b>SyntaxError</b>、<b>NameError</b>、<b>IndentationError</b>。</p>
-            <button class="example-btn" data-example="errors">看常见报错</button>
+            <div class="card-actions"><button class="example-btn" data-example="errors">看常见报错</button></div>
           </div>
           <div class="card">
             <h3>再看出错位置</h3>
             <p class="point-desc">报错信息通常会告诉你出错的行号，有时还会给出箭头，帮助你更快定位问题。</p>
-            <button class="example-btn" data-example="trace">看定位示例</button>
+            <div class="card-actions"><button class="example-btn" data-example="trace">看定位示例</button></div>
           </div>
           <div class="card">
             <h3>不懂时可以借助 AI</h3>
             <p class="point-desc">把“报错信息 + 相关代码 + 你想做什么”一起发给 AI，会比只发一行英文报错更有效。</p>
-            <button class="example-btn" data-example="askai">看提问模板</button>
+            <div class="card-actions"><button class="example-btn" data-example="askai">看提问模板</button></div>
           </div>
           <div class="card">
             <h3>但不要完全依赖 AI</h3>
@@ -364,13 +394,13 @@
             <h3>1. 常量</h3>
             <p class="point-desc">在程序运行过程中，其值始终不发生变化的量。常见的数值或字符串都可以作为常量出现。</p>
             <div class="info-strip"><span>45</span><span>-30.2001</span><span>'Hello'</span></div>
-            <button class="example-btn" data-example="constant">看例子</button>
+            <div class="card-actions"><button class="example-btn" data-example="constant">看例子</button></div>
           </div>
           <div class="card">
             <h3>2. 变量</h3>
             <p class="point-desc">在程序运行过程中，其值可以变化的量。变量由“名字”和“值”组成。</p>
             <div class="info-strip"><span>名字：score</span><span>值：85</span></div>
-            <button class="example-btn" data-example="variable">看例子</button>
+            <div class="card-actions"><button class="example-btn" data-example="variable">看例子</button></div>
           </div>
         </div>
         <div class="callout" style="margin-top:18px">课堂提问：执行 <b>score = 60</b> 后，又执行 <b>score = 85</b>，变的是变量的名字，还是变量保存的值？</div>
@@ -388,22 +418,25 @@
             <span class="tag">int</span>
             <h3 style="margin-top:12px">整型</h3>
             <p class="point-desc">整数，不带小数部分。例如：<code>18</code>、<code>-3</code>。</p>
-            <button class="example-btn" data-example="int">看例子</button>
+            <div class="card-actions"><button class="example-btn" data-example="int">看例子</button></div>
           </div>
           <div class="card">
             <span class="tag">float</span>
             <h3 style="margin-top:12px">浮点型</h3>
             <p class="point-desc">带有小数部分的数。例如：<code>2.5</code>、<code>9.9</code>。</p>
-            <button class="example-btn" data-example="float">看例子</button>
+            <div class="card-actions"><button class="example-btn" data-example="float">看例子</button></div>
           </div>
           <div class="card">
             <span class="tag">complex</span>
             <h3 style="margin-top:12px">复数</h3>
             <p class="point-desc">由实部和虚部组成，可以写成 <code>a+bj</code> 的形式。</p>
-            <button class="example-btn" data-example="complex">看例子</button>
+            <div class="card-actions"><button class="example-btn" data-example="complex">看例子</button></div>
           </div>
         </div>
-        <div class="callout" style="margin-top:18px">如果不确定某个数据属于哪一类，可以用 <b>type()</b> 来验证。<button class="example-btn" data-example="typecheck" style="margin-left:10px">立即演示</button></div>
+        <div class="callout action-callout" style="margin-top:18px">
+          <span>如果不确定某个数据属于哪一类，可以用 <b>type()</b> 来验证。</span>
+          <button class="example-btn" data-example="typecheck">立即演示</button>
+        </div>
       </div>
     </section>
 
@@ -419,13 +452,13 @@
             <div class="code">text = <span class="str">"Python"</span>
 text[<span class="num">0</span>]   →  <span class="str">'P'</span>
 text[<span class="num">-1</span>]  →  <span class="str">'n'</span></div>
-            <button class="example-btn" data-example="string">看索引例子</button>
+            <div class="card-actions"><button class="example-btn" data-example="string">看索引例子</button></div>
           </div>
           <div class="card">
             <h3>(3) List（列表）</h3>
             <p class="point-desc">列表写在方括号 <code>[ ]</code> 中，元素之间用逗号分隔。列表中的元素类型可以不同。</p>
             <div class="code">student = [<span class="str">'Li Hua'</span>, <span class="num">16</span>, <span class="num">92.5</span>, <span class="kw">True</span>]</div>
-            <button class="example-btn" data-example="list">看列表例子</button>
+            <div class="card-actions"><button class="example-btn" data-example="list">看列表例子</button></div>
           </div>
         </div>
       </div>
@@ -440,14 +473,18 @@ text[<span class="num">-1</span>]  →  <span class="str">'n'</span></div>
           <div class="card">
             <h3>(4) Sets（集合）</h3>
             <p class="point-desc">集合是无序且不重复的元素序列，常用来判断成员关系或对数据去重。</p>
-            <button class="example-btn" data-example="set">看自动去重</button>
-            <button class="example-btn" data-example="emptyset" style="margin-left:8px">看空集合陷阱</button>
+            <div class="card-actions">
+              <button class="example-btn" data-example="set">看自动去重</button>
+              <button class="example-btn" data-example="emptyset">看空集合陷阱</button>
+            </div>
           </div>
           <div class="card">
             <h3>(5) Dictionary（字典）</h3>
             <p class="point-desc">字典是一组“键：值”的配对结构。访问数据时，不是靠位置，而是靠键。</p>
-            <button class="example-btn" data-example="dict">看键值访问</button>
-            <button class="example-btn" data-example="dictkey" style="margin-left:8px">看键唯一</button>
+            <div class="card-actions">
+              <button class="example-btn" data-example="dict">看键值访问</button>
+              <button class="example-btn" data-example="dictkey">看键唯一</button>
+            </div>
           </div>
         </div>
         <div class="callout" style="margin-top:18px"><b>对比记忆：</b>列表靠索引取值，字典靠键取值。</div>
@@ -522,7 +559,10 @@ result = (a + b) * <span class="num">2</span></div>
           </div>
         </div>
 
-        <div class="callout" style="margin-top:18px">特别提醒：<code>=</code> 表示赋值，<code>==</code> 才表示“是否相等”。 <button class="example-btn" data-example="equal" style="margin-left:10px">对比一下</button></div>
+        <div class="callout action-callout" style="margin-top:18px">
+          <span>特别提醒：<code>=</code> 表示赋值，<code>==</code> 才表示“是否相等”。</span>
+          <button class="example-btn" data-example="equal">对比一下</button>
+        </div>
       </div>
     </section>
 
@@ -681,11 +721,22 @@ score = <span class="num">85</span>
 <span class="fn">print</span>(score)</div>
 <div class="output">60<br>85</div>`
   },
-  int:{title:"int：整型",html:`<div class="code">age = <span class="num">16</span>
-students = <span class="num">45</span></div><div class="output">type(age) → &lt;class 'int'&gt;</div>`},
-  float:{title:"float：浮点型",html:`<div class="code">height = <span class="num">1.72</span>
-price = <span class="num">9.9</span></div><div class="output">type(height) → &lt;class 'float'&gt;</div>`},
-  complex:{title:"complex：复数",html:`<div class="code">z = <span class="num">3</span> + <span class="num">4</span>j
+  int:{
+    title:"int：整型（integer）",
+    html:`<div class="callout"><b>int</b> 来自英文 <b>integer</b>，意思是“整数”。可以把 <b>int → integer → 整数</b> 连起来记忆。</div>
+<div class="code" style="margin-top:14px">age = <span class="num">16</span>
+students = <span class="num">45</span></div>
+<div class="output">type(age) → &lt;class 'int'&gt;</div>`
+  },
+  float:{
+    title:"float：浮点型（floating-point number）",
+    html:`<div class="callout"><b>float</b> 对应英文 <b>floating-point number</b>，意思是“浮点数”。课堂上可以先记成：<b>float → floating-point → 带小数的数据</b>。</div>
+<div class="code" style="margin-top:14px">height = <span class="num">1.72</span>
+price = <span class="num">9.9</span></div>
+<div class="output">type(height) → &lt;class 'float'&gt;</div>`
+  },
+  complex:{title:"complex：复数（complex number）",html:`<div class="callout"><b>complex</b> 对应英文 <b>complex number</b>，也就是“复数”。</div>
+<div class="code" style="margin-top:14px">z = <span class="num">3</span> + <span class="num">4</span>j
 <span class="fn">print</span>(z.real)
 <span class="fn">print</span>(z.imag)</div><div class="output">3.0<br>4.0</div>`},
   typecheck:{title:"用 type() 验证数据类型",html:`<div class="code"><span class="fn">print</span>(<span class="fn">type</span>(<span class="num">18</span>))
@@ -880,6 +931,8 @@ function go(i){
   pagePill.textContent = `${current+1} / ${slides.length}`;
   prevBtn.disabled = current===0;
   nextBtn.disabled = current===slides.length-1;
+  document.getElementById('edgePrev').disabled = current===0;
+  document.getElementById('edgeNext').disabled = current===slides.length-1;
   updateTabs();
 }
 
@@ -891,9 +944,43 @@ function openExample(key){
   modalWrap.classList.add('show');
 }
 
-document.addEventListener('click',e=>{
-  const btn = e.target.closest('[data-example]');
-  if(btn) openExample(btn.dataset.example);
+function isInteractiveTarget(target){
+  return !!target.closest(
+    'button, a, input, textarea, select, label, [role="button"], ' +
+    '.topbar, .bottom-nav, .modal, .modal-wrap, .code'
+  );
+}
+
+/*
+  点击优先级：
+  1. 例子/函数按钮最高优先级 -> 打开弹窗，不翻页。
+  2. 其他交互控件 -> 执行控件自己的功能，不翻页。
+  3. 普通页面区域 -> 只有点击视口左右 13% 区域才翻页。
+  页面边缘没有透明覆盖层，因此按钮始终能够正常接收点击。
+*/
+document.addEventListener('click', e => {
+  const exampleBtn = e.target.closest('[data-example]');
+  if(exampleBtn){
+    e.preventDefault();
+    openExample(exampleBtn.dataset.example);
+    return;
+  }
+
+  if(modalWrap.classList.contains('show')) return;
+  if(isInteractiveTarget(e.target)) return;
+
+  // 用户正在选中文字时，不把鼠标释放误判成翻页。
+  const selection = window.getSelection ? window.getSelection().toString().trim() : '';
+  if(selection) return;
+
+  const edgeWidth = Math.min(150, window.innerWidth * 0.13);
+  if(e.clientX <= edgeWidth){
+    if(current > 0) go(current - 1);
+    return;
+  }
+  if(e.clientX >= window.innerWidth - edgeWidth){
+    if(current < slides.length - 1) go(current + 1);
+  }
 });
 
 document.getElementById('closeModal').onclick = ()=>modalWrap.classList.remove('show');
@@ -901,8 +988,8 @@ modalWrap.addEventListener('click',e=>{ if(e.target===modalWrap) modalWrap.class
 
 prevBtn.onclick = ()=>go(current-1);
 nextBtn.onclick = ()=>go(current+1);
-document.getElementById('zonePrev').onclick = ()=>go(current-1);
-document.getElementById('zoneNext').onclick = ()=>go(current+1);
+document.getElementById('edgePrev').onclick = ()=>go(current-1);
+document.getElementById('edgeNext').onclick = ()=>go(current+1);
 
 document.getElementById('fullscreenBtn').onclick = async ()=>{
   if(!document.fullscreenElement){
@@ -918,7 +1005,7 @@ document.getElementById('helpBtn').onclick = ()=>{
   <div class="point"><div class="point-num">→</div><div class="point-body"><div class="point-title">下一页</div></div></div>
   <div class="point"><div class="point-num">␣</div><div class="point-body"><div class="point-title">空格：下一页</div></div></div>
   <div class="point"><div class="point-num">Esc</div><div class="point-body"><div class="point-title">关闭弹窗 / 退出全屏</div></div></div>
-  <div class="callout" style="margin-top:16px">还可以直接点击屏幕左侧或右侧区域进行翻页。</div>`;
+  <div class="callout" style="margin-top:16px">可以点击独立箭头翻页，也可以直接点击屏幕左右边缘的空白区域翻页。页面中的“看例子”等按钮优先响应，不会触发翻页。</div>`;
   modalWrap.classList.add('show');
 };
 
